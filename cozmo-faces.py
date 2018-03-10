@@ -27,10 +27,11 @@ def track_face(robot: cozmo.robot.Robot):
             img.save("/files/photo.png")
             robot.set_all_backpack_lights(cozmo.lights.blue_light)
             print("Unknown driver face appeared")
+            time.sleep(5)
             return
-        else:
+        else:s
             robot.set_backpack_lights_off()
-            time.sleep(.1)
+            time.sleep(5)
 
 
 
