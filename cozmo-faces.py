@@ -29,7 +29,8 @@ def track_face(robot: cozmo.robot.Robot):
             print("Unknown driver face appeared")
             time.sleep(5)
             return
-        else:s
+        else:
+            print("Known driver")
             robot.set_backpack_lights_off()
             time.sleep(5)
 
