@@ -1,42 +1,23 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-# PRUEBAS CON EL RECONOCIMIENTO FACIAL DE COZMO #
-
-#lib generales
-import asyncio
-import time
-
-#lib para email
-import smtplib
-##from email.MIMEBase import MIMEBase
-##from email import encoders
-
-#lib para img
-try:
-    from PIL import Image
-except ImportError:
-    sys.exit("Cannot import from PIL: Do `pip3 install --user Pillow` to install")
-
-#lib cozmo
 import cozmo
 from cozmo.util import degrees, distance_mm, speed_mmps
 
 #---------------------------------------------------------------------------------------------
 
 def track_face(robot: cozmo.robot.Robot):
-
+    robot.say_text("Kozmo faces activado").wait_for_completed()
     # Move lift down and tilt the head up
+
     robot.move_lift(-3)
-    robot.SetHeadAngle(cozmo.robot.MAX_HEAD_ANGLE).wait_for_completed()
-    robot.SetLiftAngle(cozmo.robot.MIN_LIFT_ANGLE,in_parallel=True).wait_for_completed()
+    robot.set_head_angle(cozmo.robot.MAX_HEAD_ANGLE).wait_for_completed()
+    robot.set_lift_height(0.0).wait_for_completed()
 
     face = None
     faceRevealed = False
 
     print("Press CTRL-C to quit")
 
-    while (!faceRevealed):
+    while (not faceRevealed):
         if (cozmo.faces.EvtFaceAppeared()):
             faceRevealed = True
             img = cozmo.world.World.latest_image()
