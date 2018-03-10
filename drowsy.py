@@ -38,24 +38,29 @@ class DrowC:
         (self.rStart, self.rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
 
     def say_goodbye(self):
-        engine.say("Hey... Where are you?")
-        engine.runAndWait();
+        #engine.say("Hey... Where are you?")
+        #engine.runAndWait()
+        pass
 
     def say_distraction(self):
-        engine.say("Hey... Look forward?")
-        engine.runAndWait();
+        #engine.say("Hey... Look forward?")
+        #engine.runAndWait()
+        pass
     def sound_alarm(self):
-	# play an alarm sound
-        engine.say("Hey... Wake up!")
-        engine.runAndWait();
-	#playsound.playsound(path)
+    	pass
+		# play an alarm sound
+        #engine.say("Hey... Wake up!")
+        #engine.runAndWait()
+		#playsound.playsound(path)
+
     def say_hello(self):
-	# play an alarm sound
-        engine.say("Hello... welcome back!")
-        engine.runAndWait();
-        engine.say("what's your name?")
-        engine.runAndWait();
-	#playsound.playsound(path)
+		# play an alarm sound
+        #engine.say("Hello... welcome back!")
+        #engine.runAndWait()
+        #engine.say("what's your name?")
+        #engine.runAndWait()
+        pass
+		#playsound.playsound(path)
 
     def eye_aspect_ratio(self,eye):
 	# compute the euclidean distances between the two sets of
@@ -243,8 +248,8 @@ def detect_direction(im,image_points):
 
 d=DrowC()
 vs = VideoStream(0).start()
-engine= pyttsx3.init()
-engine.setProperty("rate",150)
+#engine= pyttsx3.init()
+#engine.setProperty("rate",150)
 while(d.detect(vs.read())!=-1):
     pass
 cv2.destroyAllWindows()
