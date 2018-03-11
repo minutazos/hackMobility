@@ -39,11 +39,10 @@ def track_face(robot: cozmo.robot.Robot):
     while (not faceRevealed):
         if (cozmo.faces.EvtFaceAppeared()):
             faceRevealed = True
-            img = cozmo.world.World.latest_image()
-            rawData = open(img,'rb').read()
-            imgSize = (x,y)
-            img = Image.fromstring('L', imgSize, rawData, 'raw', 'F;16')
-            img.save("/files/photo.png")
+            print("taking a picture...")
+            pic_filename = "photo.png"
+            robot.say_text("Say cheese!").wait_for_completed()
+            latest_image = robot.world.latest_image
             robot.set_all_backpack_lights(cozmo.lights.blue_light)
             send_mail()
             print("Unknown driver face appeared")
