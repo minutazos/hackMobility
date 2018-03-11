@@ -12,7 +12,7 @@ import time
 import dlib
 import cv2
 import pyttsx3
-import math
+
 import random
 
 TRESHOLD= 80
@@ -25,9 +25,7 @@ class DrowC:
     COUNTER = 0
     ALARM_ON = False
     visible=False
-    yawning=False
     lostCounter=0
-    mouthSize=0
     faceDirection="front"
     distractedCounter=-1
     def __init__(self):
@@ -67,25 +65,6 @@ class DrowC:
         pass
 		#playsound.playsound(path)
 
-    def mouth_size(self,points):
-        mouth=points[48:][:]
-        x=np.array([i[0] for i in mouth.tolist()])
-        
-        y=np.array([i[1] for i in mouth.tolist()])
-        xdist=0
-        ydist=0
-        
-        for i in range(len(x)):
-        	for j in range(i,len(x)):
-        		#print("x: ",x[i]-x[j])
-        		xdist+=math.pow(x[i]-x[j],2)
-        		ydist+=math.pow(y[i]-y[j],2)
-
-
-
-        x=math.sqrt(xdist)
-        y=math.sqrt(ydist)
-        return np.array((x,y))
     def eye_aspect_ratio(self,eye):
 	# compute the euclidean distances between the two sets of
 	# vertical eye landmarks (x, y)-coordinates
@@ -119,11 +98,10 @@ class DrowC:
 
             # detect faces in the grayscale frame
             rects = self.detector(gray, 0)
-            new_user=False
             if(len(rects)!=0):
                 if(not self.visible):
                      self.visible=True
-                     new_user=True
+                     
                      t = Thread(target=self.say_hello)
                      t.deamon = True
                      t.start()
@@ -152,17 +130,13 @@ class DrowC:
                     # determine the facial landmarks for the face region, then
                     # convert the facial landmark (x, y)-coordinates to a NumPy
                     # array
-
                     shape = self.predictor(gray, rect)
                     shape = face_utils.shape_to_np(shape)
-                    if(new_user):
-                    	self.mouthSize=self.mouth_size(shape)
                     """for p in np.array(shape):
                     	cv2.circle(frame, (int(p[0]), int(p[1])), 3, (0,0,255), -1)
                     """
                     #print(len(shape))
                     points=np.array([shape[33],shape[8],shape[45],shape[36],shape[54],shape[48]],dtype="double")
-                    self.FACE_PROPORTION=distance(shape[1],shape[15])/distance(meanPoint(shape[19],shape[24]),shape[8])
                     #print(points)
                     cv2.imwrite("prueba.png",frame)
                     self.faceDirection=detect_direction(frame,points)
@@ -182,22 +156,12 @@ class DrowC:
                     rightEyeHull = cv2.convexHull(rightEye)
                     cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)
                     cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)
-                    if(self.yawning):
-                    	cv2.putText(frame, "bostezando", (60, 30),
-                                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+
                     # check to see if the eye aspect ratio is below the blink
                     # threshold, and if so, increment the blink frame counter
-                    tempMouth=self.mouth_size(shape)
-                    if(not isinstance(self.mouthSize,int)):
-
-                    	if(tempMouth[1]<=self.mouthSize[1]*1.3):
-                    		self.yawning=False
-
                     if ear < self.EYE_AR_THRESH:
                             self.COUNTER += 1
-                            if(not isinstance(self.mouthSize,int)):
-                            	if(tempMouth[1]>self.mouthSize[1]*1.3):
-                            		self.yawning=True
+
                             # if the eyes were closed for a sufficient number of
                             # then sound the alarm
                             if self.COUNTER >= self.EYE_AR_CONSEC_FRAMES:
@@ -210,12 +174,13 @@ class DrowC:
                                             t.deamon = True
                                             t.start()
 
-                                    
+                                    # draw an alarm on the frame
+                                    #cv2.putText(frame, "DROWSINESS ALERT!", (10, 30),
+                                    #       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
                     # otherwise, the eye aspect ratio is not below the blink
                     # threshold, so reset the counter and alarm
                     else:
-                            
                             self.COUNTER = 0
                             self.asleep=False
                             self.ALARM_ON = False
@@ -257,7 +222,7 @@ def detect_direction(im,image_points):
  
     # Camera internals
      
-    focal_length = 0.0385#size[1]
+    focal_length = size[1]
     center = (size[1]/2, size[0]/2)
     camera_matrix = np.array(
                  [[focal_length, 0, center[0]],
@@ -299,14 +264,7 @@ def detect_direction(im,image_points):
     	return "up"
 
     return "front"
-def meanPoint(point1,point2):
-	x=(point1[0]+point2[0])/2
-	y=(point1[0]+point2[0])/2
-	return np.array((x,y))
-def distance(point1,point2):
-	x=point1[0]-point2[0]
-	y=point1[1]-point2[1]
-	return math.sqrt(math.pow(x,2)+math.pow(y,2))
+ 
 
 if(__name__=="__main__"):
 

@@ -3,7 +3,7 @@ import alexa
 import time
 from threading import Thread
 
-from concepts import concepto
+
 
 
 
