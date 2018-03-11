@@ -44,7 +44,6 @@ def track_face(robot: cozmo.robot.Robot):
             faceRevealed = True
             print("taking a picture...")
             pic_filename = "photo.png"
-            robot.say_text("Say cheese!").wait_for_completed()
             latest_image = robot.world.latest_image
             latest_image.raw_image.convert('L').save(pic_filename)
             robot.set_all_backpack_lights(cozmo.lights.blue_light)
@@ -65,14 +64,14 @@ def send_mail():
     smtpUser = 'alvaro.garcia.bamala@gmail.com'
     smtpPass = 'agbHackathon96'
 
-    toAdd = 'classicsold@gmail.com'
+    toAdd = 'chewbacca.team.hack@gmail.com'
     fromAdd = smtpUser
 
     today = datetime.date.today()
 
-    subject  = 'Data File 01 %s' % today.strftime('%Y %b %d')
+    subject  = 'CAR ALERT SECURITY-Stranger Detected'
     header = 'To :' + toAdd + '\n' + 'From : ' + fromAdd + '\n' + 'Subject : ' + subject + '\n'
-    body = 'This is a data file on %s' % today.strftime('%Y %b %d')
+    body = 'The system detected a stranger in your car.'+ '\n'+  '\n' + 'You can see a data image.'+ '\n' + '\n' 'You recognize it?'
 
     attach = 'Data on %s.csv' % today.strftime('%Y-%m-%d')
 
