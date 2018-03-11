@@ -1,4 +1,4 @@
-attach#!/usr/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #cozmo libs
@@ -12,7 +12,9 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 from email import encoders
-
+from email.mime.image import MIMEImage
+import os
+import datetime
 #lib para img
 try:
     from PIL import Image
@@ -74,18 +76,18 @@ def send_mail():
     attach = 'Data on %s.csv' % today.strftime('%Y-%m-%d')
 
     print (header)
-    assert type(toAdd)==list
-    assert type(attach)==list
+    #assert type(toAdd)==list
+    #assert type(attach)==list
 
     msg = MIMEMultipart()
     msg['From'] = smtpUser
-    msg['To'] = COMMASPACE.join(to)
+    msg['To'] = COMMASPACE.join(toAdd)
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
 
     msg.attach( MIMEText(body) )
 
-    fp = open('files/photo.png', 'rb')
+    fp = open('photo.png', 'rb')
     img = MIMEImage(fp.read())
     fp.close()
     msg.attach(img)
