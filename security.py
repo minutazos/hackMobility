@@ -43,6 +43,8 @@ def track_face(robot: cozmo.robot.Robot):
         if (cozmo.faces.EvtFaceAppeared()):
             faceRevealed = True
             print("taking a picture...")
+            robot.play_anim_trigger(cozmo.anim.Triggers.MeetCozmoScanningIdle).wait_for_completed()
+            robot.play_anim_trigger(cozmo.anim.Triggers.MemoryMatchCozmoFollowTapsSoundOnly).wait_for_completed()
             pic_filename = "photo.png"
             latest_image = robot.world.latest_image
             latest_image.raw_image.convert('L').save(pic_filename)
