@@ -2,7 +2,7 @@ import asyncio
 import cozmo
 
 def do_lookforface(robot):
-	for i in range(3):
+	for i in range(5):
 		robot.say_text(str(i + 1)).wait_for_completed()
 	any_face = None
 	print("Looking for a face...")
