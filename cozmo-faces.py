@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+attach#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #cozmo libs
@@ -43,6 +43,7 @@ def track_face(robot: cozmo.robot.Robot):
             pic_filename = "photo.png"
             robot.say_text("Say cheese!").wait_for_completed()
             latest_image = robot.world.latest_image
+            latest_image.raw_image.convert('L').save(pic_filename)
             robot.set_all_backpack_lights(cozmo.lights.blue_light)
             send_mail()
             print("Unknown driver face appeared")
@@ -58,52 +59,46 @@ def track_face(robot: cozmo.robot.Robot):
 #---------------------------------------------------------------------------------------------
 
 def send_mail():
-    remitente = "alvaro.garcia.bamala@gmail.com"
-    destinatario = "classicsold@gmail.com"
-    asunto = "Some stranger is using your car!"
-    mensaje = """Hi!<br/> <br/>
-    This message is sent when there is an unrecognized driver.
-    An image of the driver's face is attached to the e-mail.
-    """
+    smtpUser = 'alvaro.garcia.bamala@gmail.com'
+    smtpPass = 'agbHackathon96'
 
-    email = """From: %s
-    To: %s
-    MIME-Version: 1.0
-    Content-type: text/html
-    Subject: %s
+    toAdd = 'classicsold@gmail.com'
+    fromAdd = smtpUser
 
-    %s
-    """ % (remitente, destinatario, asunto, mensaje)
-    #
+    today = datetime.date.today()
 
-        ##we charge img
-    fp = open('files/photo.png','rb')
-    adjunto = MIMEBase('multipart', 'encrypted')
-    adjunto.set_payload(fp.read())
+    subject  = 'Data File 01 %s' % today.strftime('%Y %b %d')
+    header = 'To :' + toAdd + '\n' + 'From : ' + fromAdd + '\n' + 'Subject : ' + subject + '\n'
+    body = 'This is a data file on %s' % today.strftime('%Y %b %d')
+
+    attach = 'Data on %s.csv' % today.strftime('%Y-%m-%d')
+
+    print (header)
+    assert type(toAdd)==list
+    assert type(attach)==list
+
+    msg = MIMEMultipart()
+    msg['From'] = smtpUser
+    msg['To'] = COMMASPACE.join(to)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+
+    msg.attach( MIMEText(body) )
+
+    fp = open('files/photo.png', 'rb')
+    img = MIMEImage(fp.read())
     fp.close()
-        #base64 encryption to send it
-    encoders.encode_base64(adjunto)
-        #header and title
-    adjunto.add_header('Content-Disposition', 'attachment', filename='unknownDriver.png')
-        #msg attach
-    email.attach(adjunto)
+    msg.attach(img)
 
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.ehlo_or_helo_if_needed()
+    server.starttls()
+    server.ehlo_or_helo_if_needed()
+    server.login(smtpUser,smtpPass)
+    server.sendmail(smtpUser, to, msg.as_string())
 
-        #we send the mail
-    try:
-        #Login
-        username = 'alvaro.garcia.bamala@gmail.com'
-        password = 'agbHackathon96'
-        smtp = smtplib.SMTP('smtp.gmail.com:587')
-        smtp.ehlo_or_helo_if_needed()
-        smtp.starttls()
-        smtp.ehlo_or_helo_if_needed()
-        smtp.login(username,password)
-        smtp.sendmail(remitente, destinatario, email)
-        smtp.quit()
-        print ("Correo enviado")
-    except:
-        print ("""Error: el mensaje no pudo enviarse.
-        Compruebe que sendmail se encuentra instalado en su sistema""")
+    print ('Done')
+
+    server.quit()
 
 cozmo.run_program(track_face, use_viewer=True, force_viewer_on_top=True)
