@@ -39,4 +39,3 @@ class voiceRecognitor:
 			except sr.RequestError as e:
 			    print("Alexia error; {0}".format(e))
 
-
